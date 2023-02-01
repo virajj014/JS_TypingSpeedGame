@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Ubuntu&display=swap');
+
+    * {
+        margin: 0px;
+        padding: 0px;
+        font-family: 'Ubuntu', sans-serif;
+    }
+
+    body {
+        background: linear-gradient(to bottom right, #33ccff 0%, #ff99cc 100%);
+        background-repeat: no-repeat;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    h1 {
+        color: white;
+        margin-bottom: 15px;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 600px;
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        position: relative;
+    }
+
+
+    .container input{
+        z-index: -10;
+        position: absolute;
+        opacity: 0;
+    }
+
+    #pg{
+        background-color: white;
+        color: rgb(148, 148, 148);
+    }
+
+
+    #pg::selection{
+        background-color: #ff99cc;
+        color: black;
+    }
+
+
+    .containerin{
+        display:flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+        background-color: #242424;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    .result{
+        display: flex;
+        color: white;
+        /* justify-content: space-between; */
+        width: 90%;
+    }
+
+    .result .txt1{
+        font-size: 14px;
+    }
+
+    .result .txt2{
+        font-size: 20px;
+        font-weight: bold;
+        background-color: #33ccff;
+        /* width: 100%; */
+        /* min-width: 150px; */
+        border-radius: 15px;
+        padding: 5px;
+        text-align: center;
+        min-width: 50px;
+        /* margin-left: 5px; */
+    }
+
+    .result div{
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        margin: 0px 10px;
+    }
+
+
+    .containerin button{
+        background-color: #ff99cc;
+        color: white;
+        border: none;
+        padding: 5px 20px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+</style>
+
+<body>
+    <h1>Typing Speed Game</h1>
+    <div class="container">
+        <input type="text" class="textinput" />
+
+        <div class="background-text">
+            <p id="pg">
+                But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born
+                and I will give you a complete account of the system, and expound the actual teachings of the great
+                explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids
+                pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure
+                rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or
+                pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances
+                occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us
+                ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any
+                right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one
+                who avoids a pain that produces no resultant pleasure?
+            </p>
+
+            <div class="containerin">
+                <div class="result">
+                    <div class="time">
+                        <p class="txt1">Time</p>
+                        <p class="txt2">60 s</p>
+                    </div>
+
+                    <div class="wpm">
+                        <p class="txt1">WPM</p>
+                        <p class="txt2">0</p>
+                    </div>
+
+                    <div class="mistake">
+                        <p class="txt1">Mistakes</p>
+                        <p class="txt2">0</p>
+                    </div>
+
+                    <div class="cpm">
+                        <p class="txt1">CPM</p>
+                        <p class="txt2">0</p>
+                    </div>
+                </div>
+                <button>Start</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
