@@ -41,26 +41,29 @@
     }
 
 
-    .container input{
+    .container input {
         z-index: -10;
         position: absolute;
         opacity: 0;
     }
 
-    #pg{
+    #pg {
         background-color: white;
         color: rgb(148, 148, 148);
+        word-break: break-all;
+        letter-spacing: 1px;
+        text-align: justify;
     }
 
 
-    #pg::selection{
+    /* #pg::selection{
         background-color: #ff99cc;
         color: black;
-    }
+    } */
 
 
-    .containerin{
-        display:flex;
+    .containerin {
+        display: flex;
         justify-content: space-between;
         align-items: center;
         margin-top: 20px;
@@ -69,18 +72,18 @@
         border-radius: 5px;
     }
 
-    .result{
+    .result {
         display: flex;
         color: white;
         /* justify-content: space-between; */
         width: 90%;
     }
 
-    .result .txt1{
+    .result .txt1 {
         font-size: 14px;
     }
 
-    .result .txt2{
+    .result .txt2 {
         font-size: 20px;
         font-weight: bold;
         background-color: #33ccff;
@@ -93,7 +96,7 @@
         /* margin-left: 5px; */
     }
 
-    .result div{
+    .result div {
         display: flex;
         align-items: center;
         flex-direction: column;
@@ -101,7 +104,7 @@
     }
 
 
-    .containerin button{
+    .containerin button {
         background-color: #ff99cc;
         color: white;
         border: none;
@@ -110,6 +113,36 @@
         font-weight: bold;
         cursor: pointer;
         border-radius: 5px;
+    }
+
+    #pg span {
+        position: relative;
+    }
+
+    #pg span.active::before {
+        position: absolute;
+        content: '';
+        height: 2px;
+        background-color: #ff99cc;
+        width: 100%;
+        bottom: 0;
+        left: 0;
+        opacity: 0;
+        animation: blink 1s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+        50% {
+            opacity: 1;
+        }
+    }
+
+    #pg span.correct{
+        color: green;
+    }
+
+    #pg span.incorrect{
+        color: red;
     }
 </style>
 
@@ -120,23 +153,14 @@
 
         <div class="background-text">
             <p id="pg">
-                But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born
-                and I will give you a complete account of the system, and expound the actual teachings of the great
-                explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids
-                pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure
-                rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or
-                pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances
-                occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us
-                ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any
-                right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one
-                who avoids a pain that produces no resultant pleasure?
+
             </p>
 
             <div class="containerin">
                 <div class="result">
                     <div class="time">
                         <p class="txt1">Time</p>
-                        <p class="txt2">60 s</p>
+                        <p class="txt2"></p>
                     </div>
 
                     <div class="wpm">
@@ -154,10 +178,139 @@
                         <p class="txt2">0</p>
                     </div>
                 </div>
-                <button>Start</button>
+                <button>Reset</button>
             </div>
         </div>
     </div>
 </body>
+
+
+<script>
+    const paragraphs = [
+        "The sun is a star located at the center of our solar system. It is the largest and most massive object in the solar system, accounting for about 99.86% of the total mass. The sun provides light and heat to the Earth, and its gravitational pull helps to keep the planets in their orbits.",
+        "The Earth is the third planet from the sun and the fifth largest planet in the solar system. It has one natural satellite, the moon, which is the largest relative to its host planet in the solar system. Earth is the only known planet to have liquid water on its surface, and is home to a diverse range of life forms.",
+        "The moon is the Earth's only natural satellite. It was formed about 4.5 billion years ago, shortly after the formation of the solar system. The moon has a significant effect on the Earth, as its gravitational pull causes tides and affects the rotation of the planet. It is also the location of the first human landing in 1969 by astronauts of the Apollo 11 mission.",
+        "Mars is the fourth planet from the sun and is commonly referred to as the Red Planet. It is the second closest planet to Earth, and is often studied by scientists for the possibility of supporting life. Mars has a thin atmosphere, and its surface is covered with a layer of iron oxide, giving it a reddish appearance.",
+        "Jupiter is the fifth planet from the sun and is the largest planet in the solar system. It is a gas giant, meaning that it is primarily composed of hydrogen and helium. Jupiter has a strong magnetic field and a large number of moons, including the four largest, known as the Galilean moons."
+    ]
+
+    const pg = document.getElementById('pg');
+    const userinput = document.querySelector('.textinput');
+    const resetbtn = document.querySelector('.containerin button');
+    const totaltime = document.querySelector('.time .txt2');
+    const totalwpm = document.querySelector('.wpm .txt2');
+    const totalmistake = document.querySelector('.mistake .txt2');
+    const totalcpm = document.querySelector('.cpm .txt2');
+    let timer;
+    let maxTime = 120;
+    let timeRemaining = maxTime;
+    let charIndex = 0;
+    let mistakes = 0;
+    let isTyping = 0;
+
+    const setparagraph = () => {
+        const randIndex = Math.floor(Math.random() * paragraphs.length)
+        pg.innerText = "";
+        paragraphs[randIndex].split("").forEach(char => {
+            // console.log(char);
+            pg.innerHTML += `<span>${char}</span>`
+        })
+
+        pg.querySelectorAll('span')[0].classList.add('active');
+        document.addEventListener("keydown", () => userinput.focus())
+        pg.addEventListener("click", () => userinput.focus())
+
+        totalmistake.innerText = 0;
+        totalcpm.innerText = 0;
+        totalwpm.innerText = 0;
+        totaltime.innerText = timeRemaining;
+    }
+
+
+
+    const startTyping = () => {
+        let characters = pg.querySelectorAll('span');
+        // console.log(characters);
+        //the
+        //you
+        let typedChar = userinput.value.split("")[charIndex];
+        if (charIndex < characters.length - 1 && timeRemaining > 0) {
+            if (!isTyping) {
+                // 0 or false
+                timer = setInterval(startTimer, 1000);
+                isTyping = true;
+            }
+
+            if (typedChar == null) {
+                if (charIndex > 0) {
+                    charIndex--;
+                    if (characters[charIndex].classList.contains("incorrect")) {
+                        mistakes--;
+                    }
+                    characters[charIndex].classList.remove("incorrect", "correct");
+                }
+            }
+            else {
+                if (characters[charIndex].innerText == typedChar) {
+                    characters[charIndex].classList.add("correct");
+
+                }
+                else {
+                    characters[charIndex].classList.add("incorrect");
+                    mistakes++;
+                }
+                charIndex++;
+            }
+
+            characters.forEach(char => {
+                char.classList.remove("active");
+            })
+            characters[charIndex].classList.add("active");
+
+            // WPM is calculated by dividing the number of characters typed correctly (charIndex - mistakes) by 5 (the average number of characters per word) and dividing that result by the time it took to type those words (maxTime - timeRemaining), and then multiplying the result by 60 to convert to minutes.
+
+
+            let wpm = Math.round(((charIndex - mistakes) / 5) / (maxTime - timeRemaining) * 60)
+            wpm = wpm < 0 || !wpm || wpm == Infinity ? 0 : wpm;
+            totalwpm.innerText = wpm;
+            totalmistake.innerText = mistakes;
+            totalcpm.innerText = charIndex - mistakes;
+        }
+
+        else{
+            clearInterval(timer);
+            isTyping = false;
+        }
+    }
+    const startTimer = () => {
+        if(timeRemaining >0){
+            timeRemaining--;
+            totaltime.innerText = timeRemaining;
+            let wpm = Math.round(((charIndex - mistakes) / 5) / (maxTime - timeRemaining) * 60)
+            totalwpm.innerHTMl = wpm;
+        }
+        else{
+            clearInterval(timer);
+            isTyping = false;
+        }
+     }
+    const resetGame = () => {
+        setparagraph();
+        clearInterval(timer)
+        timeRemaining = maxTime;
+        charIndex = 0;
+        mistakes = 0;
+        isTyping = 0;
+        userinput.value = "";
+        totaltime.innerText = timeRemaining;
+        totalwpm.innerText = 0;
+        totalmistake.innerText = 0;
+        totalcpm.innerText = 0;
+    }
+
+    setparagraph();
+    resetbtn.addEventListener('click', resetGame);
+    userinput.addEventListener('input', startTyping);
+</script>
 
 </html>
